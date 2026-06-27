@@ -92,6 +92,31 @@ static constexpr bool is_whitespace(char c)
 }
 
 /**
+ * Does this file have an emblems xattr?
+ * @return True if it does; false if it doesn't.
+ */
+bool XAttrReader::hasEmblems(void)
+{
+	if (!isOpen()) {
+		// File isn't open.
+		return false;
+	}
+
+	// Check if the "user.emblem" xattr exists.
+	// When specifying 0 for `size`, this function will always return
+	// either the length of the xattr, or -1 if not found.
+#if defined(HAVE_SYS_XATTR_H) && !defined(__stub_getxattr) && !defined(__APPLE__)
+	ssize_t valuelen = fgetxattr(m_fd, "user.emblem", nullptr, 0);
+#elif defined(__APPLE__)
+	ssize_t valuelen = fgetxattr(fd, "user.emblem", nullptr, 0, 0, 0);
+#elif defined(HAVE_SYS_EXTATTR_H)
+	ssize_t valuelen = extattr_get_fd(fd, EXTATTR_NAMESPACE_USER, "emblem", nullptr, 0);
+#endif
+
+	return (valuelen >= 0);
+}
+
+/**
  * Get emblems from the opened file.
  * @return Vector of emblems.
  */

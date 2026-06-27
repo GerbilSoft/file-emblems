@@ -60,6 +60,12 @@ public:
 	}
 
 	/**
+	 * Does this file have an emblems xattr?
+	 * @return True if it does; false if it doesn't.
+	 */
+	bool hasEmblems(void);
+
+	/**
 	 * Get emblems from the opened file.
 	 * @return Vector of emblems.
 	 */
