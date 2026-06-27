@@ -10,11 +10,20 @@ similar to what's available with GNOME's Nautilus and XFCE's Thunar.
 
 ## Not ready for primetime yet
 
-Currently, file-emblems has a KF6 plugin and supports reading the
-`user.emblem` extended attribute. The attribute contains one or more
-icon names, separated by spaces.
+Current status:
+* KF6 plugin supports reading emblems from the `user.emblem` extended attribute.
+* If built with ENABLE_GVFS, and `user.emblem` is not set, the plugin will also
+  attempt to read emblems from GVfs metadata, i.e. emblems that were set with
+  Nautilus or Thunar.
 
-A KF5 plugin may be added later.
+TODO:
+* Sync GVfs emblems to XAttr if GVfs is set but XAttr is not.
+* Similarly, sync XAttr to GVfs if XAttr is set but GVfs is not.
+* If both are set, neither should be updated, unless you explicitly change
+  them in the property page. (see the next item)
+* Add a property page to allow selecting one or more emblems, which will be
+  saved to the XAttr (and GVfs if enabled).
+* Maybe add a KF5 plugin?
 
 ## Feedback
 
