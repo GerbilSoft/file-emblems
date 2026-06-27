@@ -1,0 +1,16 @@
+/***************************************************************************
+ * File Emblems (KF6)                                                      *
+ * config.kf6.h.in: KDE Frameworks 6 configuration (source file)           *
+ *                                                                         *
+ * Copyright (c) 2026 by David Korth.                                      *
+ * SPDX-License-Identifier: GPL-2.0-or-later                               *
+ ***************************************************************************/
+
+/* KF6 plugin path */
+#cmakedefine KF6_PLUGIN_INSTALL_DIR "@KF6_PLUGIN_INSTALL_DIR@"
+
+/* KF6 KPropertiesDialog plugin path */
+#cmakedefine KF6_PRPD_PLUGIN_INSTALL_DIR "@KF6_PRPD_PLUGIN_INSTALL_DIR@"
+
+/* KF6 KOverlayIcon plugin path */
+#cmakedefine KF6_KOVI_PLUGIN_INSTALL_DIR "@KF6_KOVI_PLUGIN_INSTALL_DIR@"

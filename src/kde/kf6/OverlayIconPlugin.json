@@ -1,0 +1,10 @@
+{
+    "KPlugin": {
+        "Name": "overlayiconplugin_file-emblems-kf6",
+        "Description": "File Emblems overlay icon plugin"
+    },
+    "X-KDE-Protocols": [
+        "file",
+        "desktop"
+    ]
+}

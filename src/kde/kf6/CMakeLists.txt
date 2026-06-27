@@ -1,0 +1,88 @@
+# KDE Frameworks 6.x UI frontend
+PROJECT(file-emblems-kf6 LANGUAGES CXX)
+
+# Find Qt6 and KF6.
+SET(KF_SUFFIX "kf6")
+SET(REQUIRE_KF6 REQUIRED)
+INCLUDE(FE_FindQt6andKF6)
+FIND_QT6_AND_KF6()
+IF(NOT BUILD_KF6)
+	# Cannot build for KF6.
+	RETURN()
+ENDIF(NOT BUILD_KF6)
+
+# Disable deprecated Qt and KDE functionality in debug builds.
+SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DQT_DISABLE_DEPRECATED_BEFORE=0x060600 -DQT_DEPRECATED_WARNINGS_SINCE=0x060700")
+SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DKF_DISABLE_DEPRECATED_BEFORE_AND_AT=0x060000 -DKF_DEPRECATED_WARNINGS_SINCE=0x060000")
+
+# Write the config.h file.
+CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/config.kf6.h.in" "${CMAKE_CURRENT_BINARY_DIR}/config.kf6.h")
+
+# Sources and headers. (common)
+STRING(REGEX REPLACE "([^;]+)" "../\\1" ${PROJECT_NAME}_SRCS "${file-emblems-kde_SRCS}")
+STRING(REGEX REPLACE "([^;]+)" "../\\1" ${PROJECT_NAME}_H    "${file-emblems-kde_H}")
+#STRING(REGEX REPLACE "([^;]+)" "../\\1" ${PROJECT_NAME}_UIS  "${file-emblems-kde_UIS}")
+#STRING(REGEX REPLACE "([^;]+)" "../\\1" ${PROJECT_NAME}_RCC_SRCS "${file-emblems-kde_RCC_SRCS}")
+
+# Main plugin
+SET(${PROJECT_NAME}_SRCS
+	${${PROJECT_NAME}_SRCS}
+	)
+SET(${PROJECT_NAME}_H
+	${${PROJECT_NAME}_H}
+	OverlayIconPluginKF6.hpp
+	)
+
+#IF(COMMAND QT6_WRAP_UI)
+#	# Wrap UI files.
+#	QT6_WRAP_UI(${PROJECT_NAME}_UIS_H ${${PROJECT_NAME}_UIS})
+#	ADD_CUSTOM_TARGET(kf6_generate_ui_h DEPENDS ${${PROJECT_NAME}_UIS_H})
+#ENDIF(COMMAND QT6_WRAP_UI)
+
+#####################
+# Build the plugin. #
+#####################
+
+# Reference: https://community.kde.org/Frameworks/Porting_Notes
+ADD_LIBRARY(${PROJECT_NAME} MODULE
+	${${PROJECT_NAME}_SRCS}
+	${${PROJECT_NAME}_H}
+	#${${PROJECT_NAME}_UIS_H}
+	)
+DO_SPLIT_DEBUG(${PROJECT_NAME})
+SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES
+	POSITION_INDEPENDENT_CODE TRUE
+	OUTPUT_NAME "overlayiconplugin_${PROJECT_NAME}"
+	)
+TARGET_INCLUDE_DIRECTORIES(${PROJECT_NAME}
+	PUBLIC	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>		# kf6
+		$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>		# kf6
+		$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/..>	# kde
+		$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/..>	# kde
+		$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../..>	# src
+		$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/../..>	# src
+	)
+TARGET_LINK_LIBRARIES(${PROJECT_NAME} PUBLIC KF6::KIOCore)
+TARGET_LINK_LIBRARIES(${PROJECT_NAME} PUBLIC Qt6::Widgets Qt6::Gui Qt6::Core)
+
+#######################
+# Install the plugin. #
+#######################
+
+# Install plugins in the appropriate subdirectories.
+INSTALL(TARGETS ${PROJECT_NAME}
+	LIBRARY DESTINATION "${KF6_KOVI_PLUGIN_INSTALL_DIR}"
+	COMPONENT "plugin")
+# FIXME: Run kbuildsycoca6?
+
+# Check if a split debug file should be installed.
+IF(INSTALL_DEBUG)
+	# FIXME: Generator expression $<TARGET_PROPERTY:${_target},PDB> didn't work with CPack-3.6.1.
+	GET_TARGET_PROPERTY(DEBUG_FILENAME ${PROJECT_NAME} PDB)
+	IF(DEBUG_FILENAME)
+		INSTALL(FILES "${DEBUG_FILENAME}"
+			DESTINATION "lib/debug/${KF6_KOVI_PLUGIN_INSTALL_DIR}"
+			COMPONENT "debug"
+			)
+	ENDIF(DEBUG_FILENAME)
+ENDIF(INSTALL_DEBUG)
