@@ -17,8 +17,16 @@
 #  error Qt is too old!
 #endif
 
+// TODO: Simplify this by making a wrapper class that checks xattr and GVfs for us.
+#include "config.libfexattr.h"
+
 #include "libfexattr/XAttrReader.hpp"
 using LibFeXAttr::XAttrReader;
+
+#ifdef ENABLE_GVFS
+#  include "libfexattr/GVfsReader.hpp"
+using LibFeXAttr::GVfsReader;
+#endif /* ENABLE_GVFS */
 
 #include "FeQUrl.hpp"
 
@@ -32,6 +40,45 @@ using std::vector;
 OverlayIconPlugin::OverlayIconPlugin(QObject *parent)
 	: super(parent)
 {}
+
+static vector<string> getEmblems(const char *filename)
+{
+	// Check attributes.
+	// TODO: Simplify this by making a wrapper class that checks both xattr and GVfs for us.
+	// If the file has:
+	// - no attributes at all: nothing.
+	// - GVfs, but not XAttr: GVfs [and eventually, copy over to XAttr if possible]
+	// - XAttr, but not GVfs: XAttr
+	// - Both GVfs and XAttr: XAttr
+	vector<string> emblems;
+
+	// Do we have XAttr?
+	XAttrReader xattrReader(filename);
+	if (xattrReader.isOpen() && xattrReader.hasEmblems()) {
+		// We have XAttr.
+		emblems = xattrReader.emblems();
+		if (!emblems.empty()) {
+			// We actually *have* emblems in the XAttr.
+			return emblems;
+		}
+		xattrReader.close();
+	}
+
+	// No XAttr. Check GVfs.
+	GVfsReader gvfsReader(filename);
+	if (gvfsReader.isOpen() && gvfsReader.hasEmblems()) {
+		// We have GVfs.
+		emblems = gvfsReader.emblems();
+		if (!emblems.empty()) {
+			// We actually *have* embelms in GVfs.
+			return emblems;
+		}
+		gvfsReader.close();
+	}
+
+	// No emblems...
+	return emblems;
+}
 
 QStringList OverlayIconPlugin::getOverlays(const QUrl &item)
 {
@@ -55,15 +102,9 @@ QStringList OverlayIconPlugin::getOverlays(const QUrl &item)
 		s_local_filename = localUrl.toLocalFile().toStdString();
 	}
 
-	// Open the file and get the emblem list.
-	XAttrReader xattrReader(s_local_filename.c_str());
-	if (!xattrReader.isOpen()) {
-		// Unable to open the file...
-		return {};
-	}
-
+	
 	// Get the emblems.
-	vector<string> emblems = xattrReader.emblems();
+	vector<string> emblems = getEmblems(s_local_filename.c_str());
 
 	// Convert from vector<string> to QStringList.
 	QStringList sl;

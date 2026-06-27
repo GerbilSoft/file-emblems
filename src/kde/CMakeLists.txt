@@ -37,6 +37,11 @@ ADD_DEFINITIONS(-DQT_USE_FAST_CONCATENATION
 	-DQT_NO_CONTEXTLESS_CONNECT
 	)
 
+# Disable "signals" and "slots" macros.
+# GLib uses "signals" as a variable name occasionally, so these cause
+# problems when using GVfs.
+ADD_DEFINITIONS(-DQT_NO_SIGNALS_SLOTS_KEYWORDS)
+
 # Define -DQT_NO_DEBUG in release builds.
 SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -DQT_NO_DEBUG")
 

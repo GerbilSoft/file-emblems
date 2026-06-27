@@ -22,6 +22,20 @@ MACRO(OPTION_UI _pkg _desc)
 	ENDIF()
 ENDMACRO(OPTION_UI)
 
+# OPTION_UI but for ENABLE_
+MACRO(OPTION_UI_ENABLE _pkg _desc)
+	SET(ENABLE_${_pkg} AUTO CACHE STRING "${_desc}")
+	SET_PROPERTY(CACHE ENABLE_${_pkg} PROPERTY STRINGS AUTO ON OFF)
+
+	IF(ENABLE_${_pkg} STREQUAL "AUTO")
+		SET(REQUIRE_${_pkg} "")
+	ELSEIF(ENABLE_${_pkg})
+		SET(REQUIRE_${_pkg} "REQUIRED")
+	ELSE()
+		SET(REQUIRE_${_pkg} "")
+	ENDIF()
+ENDMACRO(OPTION_UI_ENABLE)
+
 IF(UNIX AND NOT APPLE)
 	# NOTE: OPTION() only supports BOOL values.
 	# Reference: https://cmake.org/pipermail/cmake/2016-October/064342.html
@@ -33,6 +47,9 @@ IF(UNIX AND NOT APPLE)
 ELSE()
 	MESSAGE(FATAL_ERROR "File Emblems currently only supports Linux platforms.")
 ENDIF()
+
+# GVfs integration (requires glib-2.0)
+OPTION_UI_ENABLE(GVFS "Enable GVfs integration to read emblems from Nautilus and Thunar.")
 
 # Link-time optimization
 # FIXME: Not working in clang builds and Ubuntu's gcc...

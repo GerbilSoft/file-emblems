@@ -81,16 +81,6 @@ void XAttrReader::close(void)
 }
 
 /**
- * Check for a delimiter character..
- * @param c Character
- * @return True if whitespace; false if not.
- */
-static constexpr bool is_whitespace(char c)
-{
-	return (c == ' ' || c == '\n' || c == '\r' || c == '\t' || c == ',' || c == ':' || c == ';');
-}
-
-/**
  * Does this file have an emblems xattr?
  * @return True if it does; false if it doesn't.
  */

@@ -66,6 +66,17 @@ public:
 	virtual std::vector<std::string> emblems(void) = 0;
 
 protected:
+	/**
+	 * Check for a delimiter character.
+	 * @param c Character
+	 * @return True if whitespace; false if not.
+	 */
+	static constexpr bool is_whitespace(char c)
+	{
+		return (c == ' ' || c == '\n' || c == '\r' || c == '\t' || c == ',' || c == ':' || c == ';');
+	}
+
+protected:
 	bool m_writable;
 };
 
