@@ -6,9 +6,11 @@ SET(CMAKE_AUTOMOC ON)
 
 # Sources and headers
 SET(${PROJECT_NAME}_SRCS
+	FeQUrl.cpp
 	OverlayIconPlugin.cpp
 	)
 SET(${PROJECT_NAME}_H
+	FeQUrl.hpp
 	)
 
 # Qt options:
