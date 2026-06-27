@@ -35,4 +35,4 @@ File Emblems is licensed under the GNU General Public License v2.
 
 [ROM Properties Page Shell Extension](https://github.com/GerbilSoft/file-emblems),
 another one of my projects. File Emblems is heavily based on parts of
-file-emblems' code.
+rom-properties' code.
