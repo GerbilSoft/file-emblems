@@ -66,7 +66,18 @@ XAttrReader::XAttrReader(const char *filename, bool writable)
 XAttrReader::~XAttrReader()
 {
 	if (m_fd >= 0) {
-		close(m_fd);
+		::close(m_fd);
+	}
+}
+
+/**
+ * Close the file if it's open.
+ */
+void XAttrReader::close(void)
+{
+	if (m_fd >= 0) {
+		::close(m_fd);
+		m_fd = -1;
 	}
 }
 
@@ -86,6 +97,11 @@ static constexpr bool is_whitespace(char c)
  */
 vector<string> XAttrReader::emblems(void)
 {
+	if (!isOpen()) {
+		// File isn't open.
+		return {};
+	}
+
 	// Value buffer
 	fe::uvector<char> value;
 	value.reserve(128);

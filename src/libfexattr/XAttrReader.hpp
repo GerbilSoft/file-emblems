@@ -46,6 +46,11 @@ public:
 	}
 
 	/**
+	 * Close the file if it's open.
+	 */
+	void close(void);
+
+	/**
 	 * Is the file writable?
 	 * @return True if writable; false if not.
 	 */
