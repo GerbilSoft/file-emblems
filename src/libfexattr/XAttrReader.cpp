@@ -117,7 +117,7 @@ vector<string> XAttrReader::emblems(void)
 #elif defined(__APPLE__)
 		valuelen = fgetxattr(fd, "user.emblem", value.data(), valuelen, 0, 0);
 #elif defined(HAVE_SYS_EXTATTR_H)
-		valuelen = extattr_get_fd(fd, EXTATTR_NAMESPACE_USER, "emblem", nullptr, 0);
+		valuelen = extattr_get_fd(fd, EXTATTR_NAMESPACE_USER, "emblem", value.data(), valuelen);
 #endif
 
 		if (valuelen > 0 && value.size() == 0) {
