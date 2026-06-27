@@ -28,6 +28,7 @@ SET(${PROJECT_NAME}_SRCS
 	)
 # Headers
 SET(${PROJECT_NAME}_H
+	IEmblemReader.hpp
 	XAttrReader.hpp
 	)
 

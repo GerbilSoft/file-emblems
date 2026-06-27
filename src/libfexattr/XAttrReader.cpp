@@ -47,7 +47,6 @@ namespace LibFeXAttr {
  */
 XAttrReader::XAttrReader(const char *filename, bool writable)
 	: m_filename(filename)
-	, m_writable(false)
 {
 	if (writable) {
 		// Try opening for writing.

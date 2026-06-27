@@ -1,6 +1,6 @@
 /***************************************************************************
  * File Emblems (libfexattr)                                               *
- * XAttrReader.hpp: Extended Attribute reader                              *
+ * IEmblemReader.hpp: Emblem reader interface                              *
  *                                                                         *
  * Copyright (c) 2026 by David Korth.                                      *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
@@ -8,61 +8,65 @@
 
 #pragma once
 
-#include "IEmblemReader.hpp"
+// C++ STL classes
+#include <string>
+#include <vector>
 
 namespace LibFeXAttr {
 
-class XAttrReader : public IEmblemReader
+class IEmblemReader
 {
+protected:
+	IEmblemReader()
+		: m_writable(false)
+	{}
+	IEmblemReader(bool writable)
+		: m_writable(writable)
+	{}
 public:
-	/**
-	 * Create an XAttrReader.
-	 * @param filename Filename
-	 * @param writable If true, attempt to open for writing.
-	 */
-	XAttrReader(const char *filename, bool writable = false);
-public:
-	~XAttrReader();
+	~IEmblemReader() = default;
 
 public:
 	/**
 	 * Get the filename.
 	 * @return Filename, or nullptr on error.
 	 */
-	const char *filename(void) const final
-	{
-		return (!m_filename.empty()) ? m_filename.c_str() : nullptr;
-	}
+	virtual const char *filename(void) const = 0;
 
 	/**
 	 * Is the file open?
 	 * @return True if the file is open; false if not.
 	 */
-	bool isOpen(void) const final
-	{
-		return (m_fd >= 0);
-	}
+	virtual bool isOpen(void) const = 0;
 
 	/**
 	 * Close the file if it's open.
 	 */
-	void close(void) final;
+	virtual void close(void) = 0;
+
+	/**
+	 * Is the file writable?
+	 * @return True if writable; false if not.
+	 */
+	bool isWritable(void) const
+	{
+		return m_writable;
+	}
 
 	/**
 	 * Does this file have an emblems xattr?
 	 * @return True if it does; false if it doesn't.
 	 */
-	bool hasEmblems(void) final;
+	virtual bool hasEmblems(void) = 0;
 
 	/**
 	 * Get emblems from the opened file.
 	 * @return Vector of emblems.
 	 */
-	std::vector<std::string> emblems(void) final;
+	virtual std::vector<std::string> emblems(void) = 0;
 
-private:
-	int m_fd;
-	std::string m_filename;
+protected:
+	bool m_writable;
 };
 
 } // namespace LibFeXAttr
