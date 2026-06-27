@@ -77,7 +77,6 @@ bool GVfsReader::hasEmblems(void)
 	}
 
 	// Attribute type should be stringv.
-	// Attribute type should be stringv.
 	// (We'll accept string as well, though other programs might not...)
 	GFileAttributeType type = g_file_info_get_attribute_type(fileInfo, "metadata::emblems");
 	return (type == G_FILE_ATTRIBUTE_TYPE_STRINGV || type == G_FILE_ATTRIBUTE_TYPE_STRING);
