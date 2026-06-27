@@ -55,7 +55,7 @@ SET(CMAKE_CXX_STANDARD 20)
 # Set default build options.
 INCLUDE(cmake/options.cmake)
 # Check for platform-specific functionality.
-#INCLUDE(cmake/platform.cmake NO_POLICY_SCOPE)
+INCLUDE(cmake/platform.cmake NO_POLICY_SCOPE)
 
 # Program information.
 SET(DESCRIPTION "File Emblems")
