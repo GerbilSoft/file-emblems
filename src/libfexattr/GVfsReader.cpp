@@ -47,9 +47,7 @@ GVfsReader::~GVfsReader()
 void GVfsReader::close(void)
 {
 	if (m_file) {
-		// TODO: g_clear_object()?
-		g_object_unref(m_file);
-		m_file = nullptr;
+		g_clear_object(&m_file);
 	}
 }
 
