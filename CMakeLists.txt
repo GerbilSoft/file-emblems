@@ -1,5 +1,9 @@
 # File Emblems
 CMAKE_MINIMUM_REQUIRED(VERSION 4.0)
+# Disable C++ module scanning by default.
+# We don't use C++ modules, and it wastes time and generates
+# a lot of extra files.
+SET(CMAKE_CXX_SCAN_FOR_MODULES OFF)
 
 # Read the project version.
 CONFIGURE_FILE(version.txt version.txt.tmp)
