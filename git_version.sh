@@ -158,7 +158,7 @@ EOF
 git_found=yes
 if [ "$GIT" = "git" ] && [ "$(which $GIT 2>/dev/null)" = "" ]; then
     git_found="'$GIT' not found"
-    exit 1
+    #break
 fi
 # If git_found=yes, we can now use $() substitutions (as git does). Hooray!
 
