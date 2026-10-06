@@ -86,20 +86,22 @@ bool GVfsReader::hasEmblems(void)
  */
 vector<string> GVfsReader::emblems(void)
 {
+	vector<string> emblems;
+
 	if (!isOpen()) {
 		// File isn't open.
-		return {};
+		return emblems;
 	}
 
 	GFileInfo *const fileInfo = g_file_query_info(m_file, "metadata::emblems", G_FILE_QUERY_INFO_NONE, nullptr, nullptr);
 	if (!fileInfo) {
-		return {};
+		return emblems;
 	}
 
 	// Did we actually get the "metadata::emblems" attribute?
 	if (!g_file_info_has_attribute(fileInfo, "metadata::emblems")) {
 		// No emblems.
-		return {};
+		return emblems;
 	}
 
 	// Attribute type should be stringv.
@@ -107,11 +109,8 @@ vector<string> GVfsReader::emblems(void)
 	GFileAttributeType type = g_file_info_get_attribute_type(fileInfo, "metadata::emblems");
 	if (type != G_FILE_ATTRIBUTE_TYPE_STRINGV && type != G_FILE_ATTRIBUTE_TYPE_STRING) {
 		// Not the right type.
-		return {};
+		return emblems;
 	}
-
-	// Emblems
-	vector<string> emblems;
 
 	if (type == G_FILE_ATTRIBUTE_TYPE_STRING) {
 		// Single string

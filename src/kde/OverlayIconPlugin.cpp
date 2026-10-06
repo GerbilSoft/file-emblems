@@ -35,7 +35,6 @@ using LibFeXAttr::GVfsReader;
 #include <vector>
 using std::string;
 using std::vector;
-#include <stdio.h>
 
 OverlayIconPlugin::OverlayIconPlugin(QObject *parent)
 	: super(parent)
@@ -64,17 +63,20 @@ static vector<string> getEmblems(const char *filename)
 		xattrReader.close();
 	}
 
+#ifdef ENABLE_GVFS
 	// No XAttr. Check GVfs.
 	GVfsReader gvfsReader(filename);
 	if (gvfsReader.isOpen() && gvfsReader.hasEmblems()) {
 		// We have GVfs.
 		emblems = gvfsReader.emblems();
 		if (!emblems.empty()) {
-			// We actually *have* embelms in GVfs.
+			// We actually *have* emblems in GVfs.
+			// TODO: Copy over to XAttr.
 			return emblems;
 		}
 		gvfsReader.close();
 	}
+#endif /* ENABLE_GVFS */
 
 	// No emblems...
 	return emblems;
@@ -82,32 +84,32 @@ static vector<string> getEmblems(const char *filename)
 
 QStringList OverlayIconPlugin::getOverlays(const QUrl &item)
 {
+	QStringList sl;
+
 	if (item.isEmpty()) {
 		// Empty URL. Nothing to do here.
-		return {};
+		return sl;
 	}
 
 	// Need to localize the URL in order to open it with xattr functions.
 	const QUrl localUrl = localizeQUrl(item);
 	if (localUrl.isEmpty()) {
 		// Unable to localize the URL.
-		return {};
+		return sl;
 	}
 
 	string s_local_filename;
-
 	if (localUrl.scheme().isEmpty()) {
 		s_local_filename = localUrl.path().toStdString();
 	} else if (localUrl.isLocalFile()) {
 		s_local_filename = localUrl.toLocalFile().toStdString();
 	}
 
-	
 	// Get the emblems.
 	vector<string> emblems = getEmblems(s_local_filename.c_str());
 
 	// Convert from vector<string> to QStringList.
-	QStringList sl;
+	sl.reserve(emblems.size());
 	for (const string &str : emblems) {
 		sl.append(QString::fromUtf8(str));
 	}

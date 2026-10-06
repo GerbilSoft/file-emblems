@@ -111,9 +111,11 @@ bool XAttrReader::hasEmblems(void)
  */
 vector<string> XAttrReader::emblems(void)
 {
+	vector<string> emblems;
+
 	if (!isOpen()) {
 		// File isn't open.
-		return {};
+		return emblems;
 	}
 
 	// Value buffer
@@ -140,7 +142,7 @@ vector<string> XAttrReader::emblems(void)
 			break;
 		} else if (valuelen == -1) {
 			// Error reading the attribute.
-			return {};
+			return emblems;
 		} else if (valuelen == 0) {
 			// attr value is an empty string
 			break;
@@ -149,11 +151,8 @@ vector<string> XAttrReader::emblems(void)
 
 	if (value.empty()) {
 		// No emblems.
-		return {};
+		return emblems;
 	}
-
-	// Emblems
-	vector<string> emblems;
 
 	// Split the xattr value on whitespace characters.
 	const char *p = value.data();
